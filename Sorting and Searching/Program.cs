@@ -9,11 +9,90 @@ namespace Sorting_and_Searching
         static void Main(string[] args)
         {
             const int n = 10000000;
-            var testArray = GenerateIntArray(n, false);
-            var target = testArray[random.Next(1, testArray.Length)];
-            var sortedArray = BucketSort(testArray);
-            Console.WriteLine(sortedArray.Length);
-            Console.WriteLine(IsSorted(sortedArray));
+            var testUnsortedArray = GenerateIntArray(n, false);
+            var testSortedArray = GenerateIntArray(n, true);
+            var target = testUnsortedArray[random.Next(1, testUnsortedArray.Length)];
+            var sortedTarget = testSortedArray[random.Next(1, testSortedArray.Length)];
+            //var sortedArray = BucketSort(testArray);
+            ForLoopSearch(target, testUnsortedArray);
+            IndexOfSearch(target, testUnsortedArray);
+            for (int i = 0; i < n; i++)
+            {
+                BinarySearch(i, testSortedArray);
+            }
+            //Console.WriteLine(IsSorted(sortedArray));
+        }
+
+        private static void BinarySearch(int target, int[] array)
+        {
+            // Sorted (Data must be sorted to use binary search)
+            // 0.00005 - 0.0001 sec
+            Console.WriteLine("\nBinary Iterative Search");
+            var indexToFind = -1;
+            var startIndex = 0;
+            var stopIndex = array.Length - 1;
+            st.Reset();
+            st.Start();
+           
+            Console.WriteLine(target);
+            while (startIndex <= stopIndex)
+            {
+                var index = (startIndex + stopIndex) / 2;
+               if (array[index] == target)
+                {
+                    indexToFind = index;
+                    break;
+                }
+
+                if (array[index] < target)
+                {
+                    startIndex = index + 1;
+                }
+
+                else
+                {
+                    stopIndex = index - 1;
+                }
+
+            }
+            st.Stop();
+            if (indexToFind != -1)
+            {
+                Console.WriteLine(target + " found at index " + indexToFind + " in\n" + st.Elapsed + " seconds");
+            }
+            else
+            {
+                Console.Read();
+            }
+        }
+        private static void IndexOfSearch(int target, int[] array)
+        {
+            // Unsorted
+            // 0.001 - 0.003 sec
+            Console.WriteLine("\nIndexOf Search\n");
+            st.Restart();
+            st.Start();
+            var index = Array.IndexOf(array, target, 0);
+            st.Stop();
+            Console.WriteLine(target + " found at index " + index + " in\n" + st.Elapsed + " seconds!");
+        }
+
+        private static void ForLoopSearch(int target, int[] array)
+        {
+            // Unsorted
+            // 0.001 - 0.01 sec
+            Console.WriteLine("ForLoop Sort\n");
+            st.Reset();
+            st.Start();
+            var index = 0;
+            for (var i = 0; i < array.Length; i++)
+            {
+                if (array[i] != target) continue;
+                index = i;
+                break;
+            }
+            st.Stop();
+            Console.WriteLine(target + " found at index " + index + " in\n" + st.Elapsed + " seconds!");
         }
 
         public static IList<int> InsertionSort(IList<int> list)
@@ -32,26 +111,25 @@ namespace Sorting_and_Searching
             return list;
         }
 
-        private static IList<int> ForLoopSort(IList<int> listToSort)
+        private static IList<int> ForLoopSort(IList<int> arrayToSort)
         {
-            for (var i = 0; i < listToSort.Count - 1; i++)
+            for (var i = 0; i < arrayToSort.Count - 1; i++)
             {
-                for (var j = i; j < listToSort.Count; j++)
+                for (var j = i; j < arrayToSort.Count; j++)
                 {
-                    if (listToSort[i] > listToSort[j])
+                    if (arrayToSort[i] > arrayToSort[j])
                     {
-                        (listToSort[i], listToSort[j]) = (listToSort[j], listToSort[i]);
+                        (arrayToSort[i], arrayToSort[j]) = (arrayToSort[j], arrayToSort[i]);
                     }
                 }
             }
-            var sortedArray = listToSort;
+            var sortedArray = arrayToSort;
             return sortedArray;
         }
 
         public static int[] BucketSort(int[] arrayToSort, int numberOfBuckets = 10000)
         {
-            if (arrayToSort.Length < numberOfBuckets) return null;
-            var sortedArray = new int[arrayToSort.Length];
+            if (arrayToSort.Length < 2) return null;
 
             // Creating buckets
             var buckets = new List<int>[numberOfBuckets];
@@ -59,18 +137,15 @@ namespace Sorting_and_Searching
             {
                 buckets[i] = new List<int>();
             }
-
             AssignToBuckets(arrayToSort, buckets, numberOfBuckets);
+
             // Sorting of each individual bucket:
-            st.Start();
             foreach (var bucket in buckets)
             {
                 InsertionSort(bucket);
             }
-            // Combine all Lists into common array:
-            sortedArray = AssignToCommonArray(buckets, arrayToSort.Length);
-            st.Stop();
-            Console.WriteLine(st.Elapsed);
+            // Combine all buckets into common array:
+            var sortedArray = AssignToCommonArray(buckets, arrayToSort.Length);
             return sortedArray;
         }
         private static int GetBucketNumber(int number, int numberOfBuckets)

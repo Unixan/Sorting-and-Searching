@@ -4,15 +4,15 @@ namespace Sorting_and_Searching
 {
     internal class Program
     {
-        private static Stopwatch st = new Stopwatch();
-        private static Random random = new Random();
+        private static Stopwatch _st = new();
+        private static Random _random = new();
         static void Main(string[] args)
         {
             const int n = 10000000;
             var testUnsortedArray = GenerateIntArray(n, false);
             var testSortedArray = GenerateIntArray(n, true);
-            var target = testUnsortedArray[random.Next(1, testUnsortedArray.Length)];
-            var sortedTarget = testSortedArray[random.Next(1, testSortedArray.Length)];
+            var target = testUnsortedArray[_random.Next(1, n)];
+            var sortedTarget = testSortedArray[_random.Next(1, n)];
             //var sortedArray = BucketSort(testArray);
             ForLoopSearch(target, testUnsortedArray);
             IndexOfSearch(target, testUnsortedArray);
@@ -25,14 +25,14 @@ namespace Sorting_and_Searching
 
         private static void BinarySearch(int target, int[] array)
         {
-            // Sorted (Data must be sorted to use binary search)
+            // Sorted array (Data must be sorted to use binary search)
             // 0.00005 - 0.0001 sec
             Console.WriteLine("\nBinary Iterative Search");
             var indexToFind = -1;
             var startIndex = 0;
             var stopIndex = array.Length - 1;
-            st.Reset();
-            st.Start();
+            _st.Reset();
+            _st.Start();
            
             Console.WriteLine(target);
             while (startIndex <= stopIndex)
@@ -55,10 +55,10 @@ namespace Sorting_and_Searching
                 }
 
             }
-            st.Stop();
+            _st.Stop();
             if (indexToFind != -1)
             {
-                Console.WriteLine(target + " found at index " + indexToFind + " in\n" + st.Elapsed + " seconds");
+                Console.WriteLine(target + " found at index " + indexToFind + " in\n" + _st.Elapsed + " seconds");
             }
             else
             {
@@ -67,23 +67,23 @@ namespace Sorting_and_Searching
         }
         private static void IndexOfSearch(int target, int[] array)
         {
-            // Unsorted
+            // Unsorted array
             // 0.001 - 0.003 sec
             Console.WriteLine("\nIndexOf Search\n");
-            st.Restart();
-            st.Start();
+            _st.Restart();
+            _st.Start();
             var index = Array.IndexOf(array, target, 0);
-            st.Stop();
-            Console.WriteLine(target + " found at index " + index + " in\n" + st.Elapsed + " seconds!");
+            _st.Stop();
+            Console.WriteLine(target + " found at index " + index + " in\n" + _st.Elapsed + " seconds!");
         }
 
         private static void ForLoopSearch(int target, int[] array)
         {
-            // Unsorted
+            // Unsorted array
             // 0.001 - 0.01 sec
             Console.WriteLine("ForLoop Sort\n");
-            st.Reset();
-            st.Start();
+            _st.Reset();
+            _st.Start();
             var index = 0;
             for (var i = 0; i < array.Length; i++)
             {
@@ -91,8 +91,8 @@ namespace Sorting_and_Searching
                 index = i;
                 break;
             }
-            st.Stop();
-            Console.WriteLine(target + " found at index " + index + " in\n" + st.Elapsed + " seconds!");
+            _st.Stop();
+            Console.WriteLine(target + " found at index " + index + " in\n" + _st.Elapsed + " seconds!");
         }
 
         public static IList<int> InsertionSort(IList<int> list)
@@ -177,10 +177,10 @@ namespace Sorting_and_Searching
         }
         public static int[] ArraySort(int[] arrayToSort)
         {
-            st.Start();
+            _st.Start();
             Array.Sort(arrayToSort);
-            st.Stop();
-            Console.WriteLine(st.Elapsed);
+            _st.Stop();
+            Console.WriteLine(_st.Elapsed);
             return arrayToSort;
         }
         public static int[] GenerateIntArray(int length, bool sorted, int maxVal = 0)
@@ -192,10 +192,10 @@ namespace Sorting_and_Searching
                     arr[i] = i;
             else if (maxVal == 0)
                 for (var i = 0; i < length; i++)
-                    arr[i] = random.Next(1, int.MaxValue);
+                    arr[i] = _random.Next(1, int.MaxValue);
             else
                 for (var i = 0; i < length; i++)
-                    arr[i] = random.Next(0, maxVal + 1);
+                    arr[i] = _random.Next(0, maxVal + 1);
 
             return arr;
         }
